@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memories with Chelsie</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            handwriting: ['Caveat', 'cursive'],
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #FFF9F5;
+      background-image: radial-gradient(#fecdd3 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    .letter-paper {
+      background-image: linear-gradient(#fbcfe8 1px, transparent 1px);
+      background-size: 100% 2rem;
+      line-height: 2rem;
+    }
+    .bounce-gentle {
+      animation: bounce 2s infinite;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+  </style>
+</head>
+<body class="font-sans text-gray-800 min-h-screen flex flex-col md:flex-row pb-20 md:pb-0 selection:bg-rose-200">
+
+  <!-- Audio Player Utama Tunggal -->
+  <audio id="global-audio" preload="auto"></audio>
+
+  <!-- Tombol Floating Pemutar Musik (Pojok Kanan Atas) -->
+  <div class="fixed top-4 right-4 z-50 flex items-center gap-2">
+    <button type="button" id="music-btn" class="bg-white/95 backdrop-blur-md border border-rose-200 text-rose-500 px-4 py-2.5 rounded-full shadow-lg flex items-center justify-center gap-2 hover:scale-105 transition-all text-xs font-semibold cursor-pointer">
+      <i id="music-icon" class="fa-solid fa-music text-rose-500"></i>
+      <span id="music-text">Play Music 🎵</span>
+    </button>
+  </div>
+
+  <!-- Sidebar Navigasi -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-rose-100 p-2 z-40 md:relative md:w-64 md:border-r md:border-t-0 md:min-h-screen md:flex md:flex-col md:justify-between md:p-6 shadow-md">
+    <div>
+      <div class="hidden md:flex items-center gap-3 mb-8 px-2">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-rose-400 to-pink-300 text-white flex items-center justify-center font-bold text-2xl shadow-lg shadow-rose-200 bounce-gentle">
+          🎀
+        </div>
+        <div>
+          <h1 class="font-bold text-gray-800 text-lg leading-tight">Memories</h1>
+          <p class="text-xs text-rose-500 font-semibold flex items-center gap-1">
+            <span>Atika & Chelsie</span> ✨
+          </p>
+        </div>
+      </div>
+
+      <!-- Tombol Navigasi Utama -->
+      <div class="flex justify-around md:flex-col md:gap-2">
+        <button type="button" data-tab="dashboard" class="nav-btn cursor-pointer flex flex-col md:flex-row items-center gap-1 md:gap-3 px-3 py-2.5 rounded-2xl text-xs md:text-sm font-semibold transition-all text-rose-600 bg-rose-100/80">
+          <i class="fa-solid fa-house text-lg pointer-events-none"></i>
+          <span class="pointer-events-none">Dashboard</span>
+        </button>
+        <button type="button" data-tab="photos" class="nav-btn cursor-pointer flex flex-col md:flex-row items-center gap-1 md:gap-3 px-3 py-2.5 rounded-2xl text-xs md:text-sm font-semibold transition-all text-gray-500 hover:bg-rose-50 hover:text-rose-600">
+          <i class="fa-solid fa-images text-lg pointer-events-none"></i>
+          <span class="pointer-events-none">Foto Kenangan</span>
+        </button>
+        <button type="button" data-tab="letters" class="nav-btn cursor-pointer flex flex-col md:flex-row items-center gap-1 md:gap-3 px-3 py-2.5 rounded-2xl text-xs md:text-sm font-semibold transition-all text-gray-500 hover:bg-rose-50 hover:text-rose-600">
+          <i class="fa-solid fa-envelope-open-text text-lg pointer-events-none"></i>
+          <span class="pointer-events-none">Surat</span>
+        </button>
+        <button type="button" data-tab="chat" class="nav-btn cursor-pointer flex flex-col md:flex-row items-center gap-1 md:gap-3 px-3 py-2.5 rounded-2xl text-xs md:text-sm font-semibold transition-all text-gray-500 hover:bg-rose-50 hover:text-rose-600">
+          <i class="fa-solid fa-comments text-lg pointer-events-none"></i>
+          <span class="pointer-events-none">Ruang Chat</span>
+        </button>
+        <button type="button" data-tab="music" class="nav-btn cursor-pointer flex flex-col md:flex-row items-center gap-1 md:gap-3 px-3 py-2.5 rounded-2xl text-xs md:text-sm font-semibold transition-all text-gray-500 hover:bg-rose-50 hover:text-rose-600">
+          <i class="fa-solid fa-music text-lg pointer-events-none"></i>
+          <span class="pointer-events-none">Lagu Teman</span>
+        </button>
+        <button type="button" data-tab="timeline" class="nav-btn cursor-pointer flex flex-col md:flex-row items-center gap-1 md:gap-3 px-3 py-2.5 rounded-2xl text-xs md:text-sm font-semibold transition-all text-gray-500 hover:bg-rose-50 hover:text-rose-600">
+          <i class="fa-solid fa-timeline text-lg pointer-events-none"></i>
+          <span class="pointer-events-none">Timeline</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Frame Hiasan Bawah Sidebar -->
+    <div class="hidden md:block p-4 bg-gradient-to-br from-rose-100 to-pink-50 rounded-3xl text-center border border-rose-200/60 shadow-sm relative overflow-hidden">
+      <span class="absolute -top-2 -right-2 text-2xl">🌷</span>
+      <p class="text-xs text-rose-600 font-bold uppercase tracking-wider">Close Friends</p>
+      <p class="font-handwriting text-2xl text-rose-500 mt-1">Atika & Chelsie</p>
+      <p class="text-[10px] text-gray-400 mt-1">Forever & Always 💕</p>
+    </div>
+  </nav>
+
+  <!-- Konten Utama -->
+  <main class="flex-1 p-4 md:p-8 max-w-5xl mx-auto w-full z-10">
+
+    <!-- Header Mobile -->
+    <div class="md:hidden flex items-center justify-between mb-6 bg-white/90 p-4 rounded-3xl border border-rose-100 shadow-sm backdrop-blur-md">
+      <div class="flex items-center gap-3">
+        <span class="text-3xl">🎀</span>
+        <div>
+          <h1 class="font-bold text-gray-800">Memories</h1>
+          <p class="text-xs text-rose-500 font-semibold">Atika & Chelsie ✨</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1. TAB DASHBOARD -->
+    <section id="tab-dashboard" class="tab-content space-y-6">
+      <div class="bg-gradient-to-r from-rose-400 via-pink-400 to-amber-300 rounded-3xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden">
+        <div class="relative z-10 max-w-xl">
+          <span class="bg-white/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider backdrop-blur-md">Close Friends Zone</span>
+          <h2 class="text-2xl md:text-4xl font-extrabold mt-3 leading-tight">Memories ✨</h2>
+        </div>
+        <div class="absolute -right-4 -bottom-4 text-9xl opacity-20 select-none">🌸</div>
+        <div class="absolute right-20 top-2 text-4xl opacity-30 select-none">✨</div>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
+        <div class="bg-white p-4 rounded-3xl border border-rose-100 shadow-sm flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-pink-100 text-pink-500 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-camera"></i>
+          </div>
+          <div>
+            <p class="text-[10px] text-gray-400 font-semibold uppercase">Foto</p>
+            <p id="stat-photos" class="text-lg font-extrabold text-gray-800">0</p>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-3xl border border-rose-100 shadow-sm flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-rose-100 text-rose-500 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-envelope"></i>
+          </div>
+          <div>
+            <p class="text-[10px] text-gray-400 font-semibold uppercase">Surat</p>
+            <p id="stat-letters" class="text-lg font-extrabold text-gray-800">0</p>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-3xl border border-rose-100 shadow-sm flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-purple-100 text-purple-500 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-music"></i>
+          </div>
+          <div>
+            <p class="text-[10px] text-gray-400 font-semibold uppercase">Lagu</p>
+            <p id="stat-music" class="text-lg font-extrabold text-gray-800">0</p>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-3xl border border-rose-100 shadow-sm flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-500 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+          </div>
+          <div>
+            <p class="text-[10px] text-gray-400 font-semibold uppercase">Momen</p>
+            <p id="stat-timeline" class="text-lg font-extrabold text-gray-800">0</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. TAB FOTO KENANGAN -->
+    <section id="tab-photos" class="tab-content hidden space-y-6">
+      <div class="flex justify-between items-center bg-white p-4 rounded-3xl border border-rose-100 shadow-sm">
+        <h2 class="text-lg md:text-xl font-bold text-gray-800 flex items-center gap-2">
+          <span class="text-rose-500">📸</span> Foto Kenangan
+        </h2>
+        <button type="button" id="btn-open-photo-modal" class="bg-rose-500 hover:bg-rose-600 text-white px-4 py-2.5 rounded-2xl text-xs md:text-sm font-semibold flex items-center gap-2 transition-all shadow-md shadow-rose-200 cursor-pointer">
+          <i class="fa-solid fa-plus"></i> Tambah Foto
+        </button>
+      </div>
+
+      <div id="photos-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+    </section>
+
+    <!-- 3. TAB SURAT -->
+    <section id="tab-letters" class="tab-content hidden space-y-6">
+      <div class="flex justify-between items-center bg-white p-4 rounded-3xl border border-rose-100 shadow-sm">
+        <h2 class="text-lg md:text-xl font-bold text-gray-800 flex items-center gap-2">
+          <span class="text-rose-500">💌</span> Surat
+        </h2>
+        <button type="button" id="btn-open-letter-modal" class="bg-rose-500 hover:bg-rose-600 text-white px-4 py-2.5 rounded-2xl text-xs md:text-sm font-semibold flex items-center gap-2 transition-all shadow-md shadow-rose-200 cursor-pointer">
+          <i class="fa-solid fa-pen-nib"></i> Tulis Surat
+        </button>
+      </div>
+
+      <div id="letters-list" class="space-y-6"></div>
+    </section>
+
+    <!-- 4. TAB RUANG CHAT -->
+    <section id="tab-chat" class="tab-content hidden space-y-4">
+      <div class="bg-white rounded-3xl border border-rose-100 shadow-sm flex flex-col h-[500px] overflow-hidden">
+        <div class="p-4 bg-gradient-to-r from-rose-400 to-pink-400 text-white flex justify-between items-center">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">💬</span>
+            <div>
+              <h3 class="font-bold text-sm md:text-base">Ruang Chat Atika & Chelsie</h3>
+              <p class="text-[10px] text-rose-100">Obrolan langsung di aplikasi</p>
+            </div>
+          </div>
+          <select id="chat-sender" class="text-xs text-gray-800 rounded-xl p-1.5 bg-white font-semibold outline-none">
+            <option value="Atika">Sebagai: Atika</option>
+            <option value="Chelsie">Sebagai: Chelsie</option>
+          </select>
+        </div>
+
+        <div id="chat-box" class="flex-1 p-4 overflow-y-auto space-y-3 bg-rose-50/30"></div>
+
+        <div class="p-3 bg-white border-t border-rose-100 flex gap-2">
+          <input type="hidden" id="chat-edit-id">
+          <input type="text" id="chat-input" placeholder="Ketik pesan..." class="flex-1 text-xs border rounded-2xl p-3 outline-none focus:border-rose-400">
+          <button type="button" id="btn-send-chat" class="bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-2xl text-xs font-bold cursor-pointer"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. TAB LAGU TEMAN -->
+    <section id="tab-music" class="tab-content hidden space-y-6">
+      <div class="flex justify-between items-center bg-white p-4 rounded-3xl border border-rose-100 shadow-sm">
+        <h2 class="text-lg md:text-xl font-bold text-gray-800 flex items-center gap-2">
+          <span class="text-rose-500">🎶</span> Playlist Lagu Teman Dekat
+        </h2>
+        <button type="button" id="btn-open-music-modal" class="bg-rose-500 hover:bg-rose-600 text-white px-4 py-2.5 rounded-2xl text-xs md:text-sm font-semibold flex items-center gap-2 transition-all shadow-md shadow-rose-200 cursor-pointer">
+          <i class="fa-solid fa-plus"></i> Tambah Lagu
+        </button>
+      </div>
+
+      <!-- Player Panel Interaktif -->
+      <div class="bg-gradient-to-r from-rose-500 to-pink-500 p-6 rounded-3xl text-white shadow-lg space-y-4">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center text-2xl shadow-inner">
+            🎵
+          </div>
+          <div class="flex-1 overflow-hidden">
+            <p class="text-[10px] text-rose-200 uppercase font-bold tracking-wider">Sedang Diputar</p>
+            <h3 id="player-title" class="font-extrabold text-base md:text-lg truncate">Pilih lagu di bawah...</h3>
+            <p id="player-artist" class="text-xs text-rose-100">Teman Dekat</p>
+          </div>
+        </div>
+
+        <!-- Progress Bar & Kontrol Pemutar -->
+        <div class="space-y-2">
+          <input type="range" id="seek-bar" value="0" max="100" class="w-full h-1.5 bg-rose-200 rounded-lg appearance-none cursor-pointer accent-white">
+          <div class="flex justify-between text-[10px] text-rose-200 font-semibold">
+            <span id="current-time">00:00</span>
+            <span id="total-duration">00:00</span>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between pt-1">
+          <div class="flex items-center gap-3">
+            <button type="button" id="btn-prev-song" class="text-white hover:text-rose-200 text-lg cursor-pointer"><i class="fa-solid fa-backward-step"></i></button>
+            <button type="button" id="btn-main-play" class="w-12 h-12 rounded-full bg-white text-rose-500 flex items-center justify-center text-xl shadow-md cursor-pointer hover:scale-105 transition-all"><i class="fa-solid fa-play"></i></button>
+            <button type="button" id="btn-next-song" class="text-white hover:text-rose-200 text-lg cursor-pointer"><i class="fa-solid fa-forward-step"></i></button>
+          </div>
+          
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-volume-high text-xs text-rose-200"></i>
+            <input type="range" id="volume-bar" value="80" max="100" class="w-20 h-1 bg-rose-200 rounded-lg appearance-none cursor-pointer accent-white">
+          </div>
+        </div>
+      </div>
+
+      <!-- Informasi Bantuan Mengunggah Lagu -->
+      <div class="bg-rose-50 border border-rose-200 p-4 rounded-2xl text-xs text-rose-700">
+        <p class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-circle-info"></i> Panduan Memasukkan Link Lagu yang Kamu Upload:</p>
+        <ul class="list-disc list-inside mt-1 space-y-1 text-[11px]">
+          <li><strong>Upload ke GitHub:</strong> Taruh file MP3 kamu di folder GitHub, lalu isi URL dengan nama filenya (Contoh: <code>lagu.mp3</code>).</li>
+          <li><strong>Link Google Drive:</strong> Pastikan akses file sudah disetel <em>"Anyone with link can view"</em>. Kode akan otomatis mengubahnya menjadi link pemutar langsung!</li>
+        </ul>
+      </div>
+
+      <!-- Daftar Playlist Lagu -->
+      <div id="music-list" class="space-y-3"></div>
+    </section>
+
+    <!-- 6. TAB TIMELINE -->
+    <section id="tab-timeline" class="tab-content hidden space-y-6">
+      <div class="flex justify-between items-center bg-white p-4 rounded-3xl border border-rose-100 shadow-sm">
+        <h2 class="text-lg md:text-xl font-bold text-gray-800 flex items-center gap-2">
+          <span class="text-rose-500">⏳</span> Timeline Momen
+        </h2>
+        <button type="button" id="btn-open-timeline-modal" class="bg-rose-500 hover:bg-rose-600 text-white px-4 py-2.5 rounded-2xl text-xs md:text-sm font-semibold flex items-center gap-2 transition-all shadow-md shadow-rose-200 cursor-pointer">
+          <i class="fa-solid fa-plus"></i> Tambah Momen
+        </button>
+      </div>
+
+      <div id="timeline-list" class="space-y-6 relative border-l-2 border-rose-300 ml-4 pl-6"></div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: Foto -->
+  <div id="photo-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 border border-rose-100 shadow-2xl">
+      <div class="flex justify-between items-center">
+        <h3 id="photo-modal-title" class="text-lg font-bold text-gray-800">Tambah Foto Kenangan 📸</h3>
+        <button type="button" class="close-modal-btn text-gray-400 hover:text-gray-600 cursor-pointer" data-target="photo-modal"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <input type="hidden" id="photo-edit-id">
+      <div>
+        <label class="text-xs font-semibold text-gray-500">Pilih Foto</label>
+        <input type="file" id="photo-file" accept="image/*" class="w-full text-xs mt-1 border rounded-2xl p-2.5 bg-gray-50">
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-gray-500">Judul Foto</label>
+        <input type="text" id="photo-title" placeholder="Judul foto..." class="w-full text-sm mt-1 border rounded-2xl p-3 outline-none focus:border-rose-400">
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-gray-500">Tanggal Foto</label>
+        <input type="date" id="photo-date" class="w-full text-sm mt-1 border rounded-2xl p-3 outline-none focus:border-rose-400">
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-gray-500">Keterangan / Cerita</label>
+        <textarea id="photo-desc" placeholder="Tuliskan cerita..." class="w-full text-sm mt-1 border rounded-2xl p-3 outline-none focus:border-rose-400 h-20"></textarea>
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button type="button" class="close-modal-btn px-4 py-2.5 text-xs font-semibold text-gray-500 rounded-2xl hover:bg-gray-100 cursor-pointer" data-target="photo-modal">Batal</button>
+        <button type="button" id="btn-save-photo" class="px-5 py-2.5 text-xs font-bold bg-rose-500 text-white rounded-2xl hover:bg-rose-600 shadow-md shadow-rose-200 cursor-pointer">Simpan Foto</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Surat -->
+  <div id="letter-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-3xl p-6 w-full max-w-lg space-y-4 border border-rose-100 shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center">
+        <h3 id="letter-modal-title" class="text-lg font-bold text-gray-800">Tulis Surat 💌</h3>
+        <button type="button" class="close-modal-btn text-gray-400 hover:text-gray-600 cursor-pointer" data-target="letter-modal"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <input type="hidden" id="letter-edit-id">
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="text-xs font-semibold text-gray-500">Pengirim Surat</label>
+          <select id="letter-sender" class="w-full text-xs mt-1 border rounded-2xl p-2.5 bg-gray-50 outline-none">
+            <option value="Atika">Atika</option>
+            <option value="Chelsie">Chelsie</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-500">Pilih Stiker Hiasan</label>
+          <select id="letter-sticker" class="w-full text-xs mt-1 border rounded-2xl p-2.5 bg-gray-50 outline-none">
+            <option value="🎀">🎀 Pita Pink</option>
+            <option value="💕">💕 Heart Love</option>
+            <option value="🌸">🌸 Bunga Sakura</option>
+            <option value="🌟">🌟 Bintang Bersinar</option>
+            <option value="💌">💌 Surat Cinta</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-gray-500">Judul Surat</label>
+        <input type="text" id="letter-title" placeholder="Perihal surat..." class="w-full text-sm mt-1 border rounded-2xl p-3 outline-none focus:border-rose-400 font-semibold">
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-gray-500">Tanggal Surat</label>
+        <input type="date" id="letter-date" class="w-full text-sm mt-1 border rounded-2xl p-3 outline-none focus:border-rose-400">
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-gray-500">Warna Tema Kertas</label>
+        <select id="letter-bg" class="w-full text-xs mt-1 border rounded-2xl p-2.5 bg-gray-50 outline-none">
+          <option value="bg-rose-50 border-rose-200">Pastel Pink 🌸</option>
+          <option value="bg-amber-50 border-amber-200">Warm Peach 🍑</option>
+          <option value="bg-purple-50 border-purple-200">Soft Lavender 💜</option>
+        </select>
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-gray-500">Tulis Isi Surat</label>
+        <textarea id="letter-body" placeholder="Tuliskan isi pesan..." class="w-full text-base mt-1 border rounded-2xl p-4 outline-none focus:border-rose-400 h-36 letter-paper font-handwriting text-xl text-gray-700 leading-relaxed"></textarea>
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-gray-500">Lampiran File (Opsional)</label>
+        <input type="file" id="letter-file" class="w-full text-xs mt-1 border rounded-2xl p-2.5 bg-gray-50">
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button type="button" class="close-modal-btn px-4 py-2.5 text-xs font-semibold text-gray-500 rounded-2xl hover:bg-gray-100 cursor-pointer" data-target="letter-modal">Batal</button>
+        <button type="button" id="btn-save-letter" class="px-5 py-2.5 text-xs font-bold bg-rose-500 text-white rounded-2xl hover:bg-rose-600 shadow-md shadow-rose-200 cursor-pointer">Kirim Surat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Tambah/Edit Lagu -->
+  <div id="music-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 border border-rose-100 shadow-2xl">
+      <div class="flex justify-between items-center">
+        <h3 id="music-modal-title" class="text-lg font-bold text-gray-800">Tambah Lagu 🎶</h3>
+        <button type="button" class="close-modal-btn text-gray-400 hover:text-gray-600 cursor-pointer" data-target="music-modal"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <input type="hidden" id="music-edit-id">
+      <div>
+        <label class="text-xs font-semibold text-gray-500">Judul Lagu</label>
+        <input type="text" id="song-title" placeholder="Contoh: Count On Me" class="w-full text-sm mt-1 border rounded-2xl p-3 outline-none focus:border-rose-400">
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-gray-500">Penyanyi / Artis</label>
+        <input type="text" id="song-artist" placeholder="Contoh: Bruno Mars" class="w-full text-sm mt-1 border rounded-2xl p-3 outline-none focus:border-rose-400">
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-gray-500">Link File Audio (URL / Link Google Drive)</label>
+        <input type="text" id="song-url" placeholder="https://... atau nama-file.mp3" class="w-full text-sm mt-1 border rounded-2xl p-3 outline-none focus:border-rose-400">
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button type="button" class="close-modal-btn px-4 py-2.5 text-xs font-semibold text-gray-500 rounded-2xl hover:bg-gray-100 cursor-pointer" data-target="music-modal">Batal</button>
+        <button type="button" id="btn-save-song" class="px-5 py-2.5 text-xs font-bold bg-rose-500 text-white rounded-2xl hover:bg-rose-600 shadow-md shadow-rose-200 cursor-pointer">Simpan Lagu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Timeline -->
+  <div id="timeline-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 border border-rose-100 shadow-2xl">
+      <div class="flex justify-between items-center">
+        <h3 id="timeline-modal-title" class="text-lg font-bold text-gray-800">Tambah Momen ⏳</h3>
+        <button type="button" class="close-modal-btn text-gray-400 hover:text-gray-600 cursor-pointer" data-target="timeline-modal"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <input type="hidden" id="timeline-edit-id">
+      <div>
+        <label class="text-xs font-semibold text-gray-500">Tanggal Momen</label>
+        <input type="date" id="timeline-date" class="w-full text-sm mt-1 border rounded-2xl p-3 outline-none focus:border-rose-400">
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-gray-500">Judul Momen</label>
+        <input type="text" id="timeline-title" placeholder="Judul momen..." class="w-full text-sm mt-1 border rounded-2xl p-3 outline-none focus:border-rose-400">
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-gray-500">Detail Cerita</label>
+        <textarea id="timeline-desc" placeholder="Rincian..." class="w-full text-sm mt-1 border rounded-2xl p-3 outline-none focus:border-rose-400 h-20"></textarea>
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button type="button" class="close-modal-btn px-4 py-2.5 text-xs font-semibold text-gray-500 rounded-2xl hover:bg-gray-100 cursor-pointer" data-target="timeline-modal">Batal</button>
+        <button type="button" id="btn-save-timeline" class="px-5 py-2.5 text-xs font-bold bg-rose-500 text-white rounded-2xl hover:bg-rose-600 shadow-md shadow-rose-200 cursor-pointer">Simpan Momen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC DENGAN PEMUTAR AUDI0 HANDAL & AUTO-CONVERT LINK -->
+  <script>
+    // 10 Lagu Bawaan yang Ringan
+    const defaultSongs = [
+      { id: 101, title: "Sweet Friendship Acoustic", artist: "Acoustic Vibe", date: "07/10/2026", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
+      { id: 102, title: "Happy Memories", artist: "Chill Acoustic", date: "07/10/2026", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
+      { id: 103, title: "Best Days Together", artist: "Sunshine Ukulele", date: "07/10/2026", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
+      { id: 104, title: "Warm Smile", artist: "Soft Guitar", date: "07/10/2026", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" },
+      { id: 105, title: "Laughter & Moments", artist: "Sunny Days", date: "07/10/2026", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3" },
+      { id: 106, title: "Walking Side By Side", artist: "Indie Chill", date: "07/10/2026", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3" },
+      { id: 107, title: "Carefree Days", artist: "Cheerful Notes", date: "07/10/2026", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3" },
+      { id: 108, title: "Forever Friends", artist: "Guitar Mood", date: "07/10/2026", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" },
+      { id: 109, title: "Precious Friendship", artist: "Peaceful Vibe", date: "07/10/2026", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3" },
+      { id: 110, title: "Good Times Ahead", artist: "Happy Folk", date: "07/10/2026", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3" }
+    ];
+
+    // LocalStorage State
+    let photos = JSON.parse(localStorage.getItem('cf_photos')) || [];
+    let letters = JSON.parse(localStorage.getItem('cf_letters')) || [];
+    let chats = JSON.parse(localStorage.getItem('cf_chats')) || [];
+    let songs = JSON.parse(localStorage.getItem('cf_songs')) || defaultSongs;
+    let timeline = JSON.parse(localStorage.getItem('cf_timeline')) || [];
+
+    // State Audio Controller
+    const audio = document.getElementById('global-audio');
+    let currentSongIndex = 0;
+    let isPlaying = false;
+
+    // Helper Konversi URL Google Drive
+    function cleanAudioUrl(url) {
+      if (!url) return '';
+      // Jika Link Google Drive
+      if (url.includes('drive.google.com') && url.includes('/file/d/')) {
+        const match = url.match(/\/file\/d\/([^\/]+)/);
+        if (match && match[1]) {
+          return `https://docs.google.com/uc?export=download&id=${match[1]}`;
+        }
+      }
+      return url.trim();
+    }
+
+    function getFormattedToday() {
+      const today = new Date();
+      return today.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Navigation
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchTab(btn.getAttribute('data-tab'), btn));
+      });
+
+      // Modals
+      document.querySelectorAll('.close-modal-btn').forEach(btn => {
+        btn.addEventListener('click', () => toggleModal(btn.getAttribute('data-target'), false));
+      });
+
+      document.getElementById('btn-open-photo-modal').addEventListener('click', () => { resetPhotoForm(); toggleModal('photo-modal', true); });
+      document.getElementById('btn-open-letter-modal').addEventListener('click', () => { resetLetterForm(); toggleModal('letter-modal', true); });
+      document.getElementById('btn-open-music-modal').addEventListener('click', () => { resetMusicForm(); toggleModal('music-modal', true); });
+      document.getElementById('btn-open-timeline-modal').addEventListener('click', () => { resetTimelineForm(); toggleModal('timeline-modal', true); });
+
+      // Save handlers
+      document.getElementById('btn-save-photo').addEventListener('click', savePhoto);
+      document.getElementById('btn-save-letter').addEventListener('click', saveLetter);
+      document.getElementById('btn-send-chat').addEventListener('click', sendChatMessage);
+      document.getElementById('btn-save-song').addEventListener('click', saveSong);
+      document.getElementById('btn-save-timeline').addEventListener('click', saveTimeline);
+
+      // Music Player Actions
+      document.getElementById('music-btn').addEventListener('click', togglePlayPause);
+      document.getElementById('btn-main-play').addEventListener('click', togglePlayPause);
+      document.getElementById('btn-next-song').addEventListener('click', playNextSong);
+      document.getElementById('btn-prev-song').addEventListener('click', playPrevSong);
+
+      audio.addEventListener('timeupdate', updateProgress);
+      audio.addEventListener('ended', playNextSong);
+
+      document.getElementById('seek-bar').addEventListener('input', (e) => {
+        if (audio.duration) audio.currentTime = (e.target.value / 100) * audio.duration;
+      });
+
+      document.getElementById('volume-bar').addEventListener('input', (e) => {
+        audio.volume = e.target.value / 100;
+      });
+
+      if (songs.length > 0) loadSong(0, false);
+
+      renderAll();
+    });
+
+    function switchTab(tabId, activeBtn) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      const targetTab = document.getElementById(`tab-${tabId}`);
+      if (targetTab) targetTab.classList.remove('hidden');
+
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('text-rose-600', 'bg-rose-100/80');
+        btn.classList.add('text-gray-500');
+      });
+
+      if (activeBtn) {
+        activeBtn.classList.remove('text-gray-500');
+        activeBtn.classList.add('text-rose-600', 'bg-rose-100/80');
+      }
+    }
+
+    function toggleModal(modalId, show) {
+      const modal = document.getElementById(modalId);
+      if (!modal) return;
+      if (show) { modal.classList.remove('hidden'); modal.classList.add('flex'); }
+      else { modal.classList.remove('flex'); modal.classList.add('hidden'); }
+    }
+
+    // --- KONTROL MUSIK UTAMA ---
+    function loadSong(index, shouldPlay = true) {
+      if (index < 0 || index >= songs.length) return;
+      currentSongIndex = index;
+      const song = songs[currentSongIndex];
+      
+      const directUrl = cleanAudioUrl(song.url);
+      audio.src = directUrl;
+      
+      document.getElementById('player-title').innerText = song.title;
+      document.getElementById('player-artist').innerText = song.artist || 'Teman Dekat';
+
+      if (shouldPlay) {
+        audio.play().then(() => {
+          isPlaying = true;
+          updatePlayUI();
+        }).catch((err) => {
+          isPlaying = false;
+          updatePlayUI();
+          alert("Lagu tidak dapat diputar. Pastikan link MP3/Google Drive aktif dan bisa diakses publik!");
+        });
+      } else {
+        isPlaying = false;
+        updatePlayUI();
+      }
+      renderMusic();
+    }
+
+    function togglePlayPause() {
+      if (!audio.src && songs.length > 0) { loadSong(0, true); return; }
+
+      if (isPlaying) {
+        audio.pause();
+        isPlaying = false;
+      } else {
+        audio.play().then(() => {
+          isPlaying = true;
+        }).catch(err => {
+          alert("Gagal memutar lagu. Mohon cek URL file MP3 kamu!");
+        });
+      }
+      updatePlayUI();
+    }
+
+    function playNextSong() {
+      let nextIndex = (currentSongIndex + 1) % songs.length;
+      loadSong(nextIndex, true);
+    }
+
+    function playPrevSong() {
+      let prevIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+      loadSong(prevIndex, true);
+    }
+
+    function updatePlayUI() {
+      const musicText = document.getElementById('music-text');
+      const musicIcon = document.getElementById('music-icon');
+      const mainPlayIcon = document.getElementById('btn-main-play');
+
+      if (isPlaying) {
+        musicText.innerText = "Pause Music ⏸️";
+        musicIcon.classList.add('animate-spin');
+        mainPlayIcon.innerHTML = `<i class="fa-solid fa-pause"></i>`;
+      } else {
+        musicText.innerText = "Play Music 🎵";
+        musicIcon.classList.remove('animate-spin');
+        mainPlayIcon.innerHTML = `<i class="fa-solid fa-play"></i>`;
+      }
+      renderMusic();
+    }
+
+    function updateProgress() {
+      if (!audio.duration) return;
+      document.getElementById('seek-bar').value = (audio.currentTime / audio.duration) * 100 || 0;
+      document.getElementById('current-time').innerText = formatTime(audio.currentTime);
+      document.getElementById('total-duration').innerText = formatTime(audio.duration);
+    }
+
+    function formatTime(seconds) {
+      const min = Math.floor(seconds / 60);
+      const sec = Math.floor(seconds % 60);
+      return `${min < 10 ? '0' : ''}${min}:${sec < 10 ? '0' : ''}${sec}`;
+    }
+
+    function renderStats() {
+      document.getElementById('stat-photos').innerText = photos.length;
+      document.getElementById('stat-letters').innerText = letters.length;
+      document.getElementById('stat-music').innerText = songs.length;
+      document.getElementById('stat-timeline').innerText = timeline.length;
+    }
+
+    // --- FOTO KENANGAN ---
+    function savePhoto() {
+      const id = document.getElementById('photo-edit-id').value;
+      const title = document.getElementById('photo-title').value;
+      const desc = document.getElementById('photo-desc').value;
+      const customDate = document.getElementById('photo-date').value;
+      const fileInput = document.getElementById('photo-file');
+
+      if (!title) return alert('Mohon isi judul foto!');
+
+      const dateStr = customDate ? new Date(customDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : getFormattedToday();
+
+      const handleSave = (imgSrc) => {
+        if (id) {
+          const idx = photos.findIndex(p => p.id == id);
+          if (idx !== -1) {
+            photos[idx].title = title;
+            photos[idx].desc = desc;
+            photos[idx].date = dateStr;
+            if (imgSrc) photos[idx].src = imgSrc;
+          }
+        } else {
+          photos.push({ id: Date.now(), title, desc, date: dateStr, src: imgSrc || 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=500&auto=format&fit=crop&q=60' });
+        }
+        localStorage.setItem('cf_photos', JSON.stringify(photos));
+        toggleModal('photo-modal', false);
+        resetPhotoForm();
+        renderAll();
+      };
+
+      if (fileInput.files && fileInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (e) => handleSave(e.target.result);
+        reader.readAsDataURL(fileInput.files[0]);
+      } else handleSave(null);
+    }
+    function editPhoto(id) {
+      const item = photos.find(p => p.id == id);
+      if (!item) return;
+      document.getElementById('photo-edit-id').value = item.id;
+      document.getElementById('photo-title').value = item.title;
+      document.getElementById('photo-desc').value = item.desc;
+      document.getElementById('photo-modal-title').innerText = "Edit Foto Kenangan 📸";
+      toggleModal('photo-modal', true);
+    }
+    function deletePhoto(id) {
+      if (confirm('Hapus foto ini?')) { photos = photos.filter(p => p.id != id); localStorage.setItem('cf_photos', JSON.stringify(photos)); renderAll(); }
+    }
+    function resetPhotoForm() {
+      document.getElementById('photo-edit-id').value = '';
+      document.getElementById('photo-title').value = '';
+      document.getElementById('photo-desc').value = '';
+      document.getElementById('photo-date').value = '';
+      document.getElementById('photo-modal-title').innerText = "Tambah Foto Kenangan 📸";
+    }
+    function renderPhotos() {
+      const grid = document.getElementById('photos-grid');
+      if (photos.length === 0) { grid.innerHTML = `<div class="col-span-full text-center py-10 text-gray-400 bg-white rounded-3xl border border-dashed border-rose-200">Belum ada foto kenangan. Klik "Tambah Foto"! ✨</div>`; return; }
+      grid.innerHTML = photos.map(p => `
+        <div class="bg-white rounded-3xl overflow-hidden border border-rose-100 shadow-sm">
+          <img src="${p.src}" alt="${p.title}" class="w-full h-48 object-cover">
+          <div class="p-4">
+            <div class="flex justify-between items-start">
+              <h3 class="font-bold text-gray-800 text-base">${p.title}</h3>
+              <span class="text-[10px] font-bold text-rose-500 bg-rose-50 px-2 py-0.5 rounded-full"><i class="fa-regular fa-calendar"></i> ${p.date || 'Tanpa Tanggal'}</span>
+            </div>
+            <p class="text-xs text-gray-500 mt-2">${p.desc || ''}</p>
+            <div class="mt-3 flex justify-end gap-3 pt-2 border-t border-gray-100">
+              <button onclick="editPhoto(${p.id})" class="text-xs font-semibold text-blue-500 cursor-pointer"><i class="fa-solid fa-pen"></i> Edit</button>
+              <button onclick="deletePhoto(${p.id})" class="text-xs font-semibold text-rose-500 cursor-pointer"><i class="fa-solid fa-trash"></i> Hapus</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // --- SURAT ---
+    function saveLetter() {
+      const id = document.getElementById('letter-edit-id').value;
+      const sender = document.getElementById('letter-sender').value;
+      const title = document.getElementById('letter-title').value;
+      const body = document.getElementById('letter-body').value;
+      const sticker = document.getElementById('letter-sticker').value;
+      const bgTheme = document.getElementById('letter-bg').value;
+      const customDate = document.getElementById('letter-date').value;
+      const fileInput = document.getElementById('letter-file');
+
+      if (!title && !body) return alert('Mohon isi judul atau teks surat!');
+
+      const dateStr = customDate ? new Date(customDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : getFormattedToday();
+
+      const handleSave = (fileData) => {
+        if (id) {
+          const idx = letters.findIndex(l => l.id == id);
+          if (idx !== -1) {
+            letters[idx].sender = sender;
+            letters[idx].title = title;
+            letters[idx].body = body;
+            letters[idx].sticker = sticker;
+            letters[idx].bgTheme = bgTheme;
+            letters[idx].date = dateStr;
+            if (fileData) letters[idx].file = fileData;
+          }
+        } else {
+          letters.push({
+            id: Date.now(),
+            sender,
+            date: dateStr,
+            title: title || 'Surat Virtual',
+            body,
+            sticker,
+            bgTheme,
+            isOpen: false,
+            file: fileData || null
+          });
+        }
+        localStorage.setItem('cf_letters', JSON.stringify(letters));
+        toggleModal('letter-modal', false);
+        resetLetterForm();
+        renderAll();
+      };
+
+      if (fileInput.files && fileInput.files[0]) {
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+        reader.onload = (e) => handleSave({ name: file.name, url: e.target.result });
+        reader.readAsDataURL(file);
+      } else handleSave(null);
+    }
+    function editLetter(id) {
+      const item = letters.find(l => l.id == id);
+      if (!item) return;
+      document.getElementById('letter-edit-id').value = item.id;
+      document.getElementById('letter-sender').value = item.sender;
+      document.getElementById('letter-title').value = item.title;
+      document.getElementById('letter-body').value = item.body;
+      document.getElementById('letter
